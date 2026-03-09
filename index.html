@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор движения Земли</title>
+    <link rel="icon" type="image/png" href="logo.webp" /><title>Калькулятор движения Земли</title>
     <style>
         * {
             box-sizing: border-box;
@@ -89,7 +89,6 @@
             color: rgba(255, 255, 255, 0.5);
         }
         
-        /* Убираем стрелочки у number input */
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -127,7 +126,7 @@
             border-radius: 15px;
             padding: 20px 15px;
             border: 1px solid rgba(79, 195, 247, 0.3);
-            overflow: hidden; /* Важно: скрывает переполнение */
+            overflow: hidden;
         }
         
         .results h2 {
@@ -144,7 +143,7 @@
             align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            flex-wrap: wrap; /* Важно: позволяет перенос на мобильных */
+            flex-wrap: wrap;
             gap: 10px;
         }
         
@@ -156,14 +155,14 @@
             font-size: 14px;
             color: #b0bec5;
             flex: 1;
-            min-width: 120px; /* Чтобы текст не сжимался слишком сильно */
+            min-width: 120px;
         }
         
         .result-value-container {
             text-align: right;
             flex-shrink: 0;
-            max-width: 55%; /* Ограничиваем ширину значения */
-            word-wrap: break-word; /* Перенос длинных чисел */
+            max-width: 55%;
+            word-wrap: break-word;
             overflow-wrap: break-word;
         }
         
@@ -173,7 +172,7 @@
             color: #4fc3f7;
             display: inline-block;
             max-width: 100%;
-            word-break: break-word; /* Разрывает длинные числа */
+            word-break: break-word;
         }
         
         .result-value.min {
@@ -224,7 +223,16 @@
             word-wrap: break-word;
         }
         
-        /* === МОБИЛЬНАЯ АДАПТАЦИЯ === */
+        .precision-badge {
+            display: inline-block;
+            background: rgba(79, 195, 247, 0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #4fc3f7;
+            margin-top: 10px;
+        }
+        
         @media (max-width: 480px) {
             body {
                 padding: 15px 10px;
@@ -268,7 +276,7 @@
             
             .result-value {
                 font-size: 18px;
-                word-break: break-all; /* Агрессивный перенос чисел */
+                word-break: break-all;
             }
             
             .result-unit {
@@ -280,7 +288,6 @@
             }
         }
         
-        /* === ОЧЕНЬ МАЛЕНЬКИЕ ЭКРАНЫ === */
         @media (max-width: 360px) {
             .result-value {
                 font-size: 16px;
@@ -312,6 +319,10 @@
                     <label>Минуты</label>
                     <input type="number" id="start-minutes" min="0" max="59" value="0" placeholder="0-59">
                 </div>
+                <div class="input-group">
+                    <label>Секунды</label>
+                    <input type="number" id="start-seconds" min="0" max="59" value="0" placeholder="0-59">
+                </div>
             </div>
             <div class="input-row">
                 <div class="input-group">
@@ -330,11 +341,15 @@
             <div class="input-row">
                 <div class="input-group">
                     <label>Часы</label>
-                    <input type="number" id="end-hours" min="0" max="23" value="13" placeholder="0-23">
+                    <input type="number" id="end-hours" min="0" max="23" value="12" placeholder="0-23">
                 </div>
                 <div class="input-group">
                     <label>Минуты</label>
-                    <input type="number" id="end-minutes" min="0" max="59" value="0" placeholder="0-59">
+                    <input type="number" id="end-minutes" min="0" max="59" value="1" placeholder="0-59">
+                </div>
+                <div class="input-group">
+                    <label>Секунды</label>
+                    <input type="number" id="end-seconds" min="0" max="59" value="0" placeholder="0-59">
                 </div>
             </div>
             <div class="input-row">
@@ -353,7 +368,7 @@
             <h2>📊 Результаты</h2>
             
             <div class="duration-info" id="duration-info">
-                Длительность периода: 0 ч 0 мин
+                Длительность периода: 0 ч 0 мин 0 сек
             </div>
             
             <div class="result-item">
@@ -368,7 +383,7 @@
                 <span class="result-label">📉 Минимальная скорость</span>
                 <div class="result-value-container">
                     <span class="result-value min" id="min-speed">0</span>
-                    <span class="result-unit">км/ч</span>
+                    <span class="result-unit">км/с</span>
                 </div>
             </div>
             
@@ -376,7 +391,7 @@
                 <span class="result-label">📈 Максимальная скорость</span>
                 <div class="result-value-container">
                     <span class="result-value max" id="max-speed">0</span>
-                    <span class="result-unit">км/ч</span>
+                    <span class="result-unit">км/с</span>
                 </div>
             </div>
             
@@ -384,9 +399,13 @@
                 <span class="result-label">📊 Средняя скорость</span>
                 <div class="result-value-container">
                     <span class="result-value" id="avg-speed">0</span>
-                    <span class="result-unit">км/ч</span>
+                    <span class="result-unit">км/с</span>
                 </div>
             </div>
+            
+            <!--<div style="text-align: center;">
+                <span class="precision-badge">⚡ Интегрирование по секундам</span>
+            </div>-->
         </div>
         
         <div class="info">
@@ -394,7 +413,7 @@
             🌐 <strong>Широта</strong> влияет на скорость вращения Земли (cos широты).<br>
             📅 <strong>Дата</strong> влияет на расстояние до Солнца.<br>
             ⏰ <strong>Время</strong> влияет на направление вращения.<br>
-            <span class="warning">⚠️ Расчёт учитывает изменение скорости во времени (интегрирование)</span>
+            <span class="warning">⚠️ Расчёт учитывает изменение скорости во времени (интегрирование по секундам)</span>
         </div>
     </div>
 
@@ -406,9 +425,11 @@
         const DAYS_IN_YEAR = 365;
         const HOURS_IN_DAY = 24;
         const MINUTES_IN_HOUR = 60;
+        const SECONDS_IN_MINUTE = 60;
+        const SECONDS_IN_HOUR = 3600;
         
-        // === ФУНКЦИЯ РАСЧЁТА МГНОВЕННОЙ СКОРОСТИ (м/ч) ===
-        function getInstantSpeed(hours, minutes, day, month, latitude) {
+        // === ФУНКЦИЯ РАСЧЁТА МГНОВЕННОЙ СКОРОСТИ (м/с) ===
+        function getInstantSpeedMs(hours, minutes, seconds, day, month, latitude) {
             // 1. День года
             const dayOfYear = (month - 1) * 30 + day;
             
@@ -422,23 +443,24 @@
             // 4. Окружность Земли на данной широте (метры)
             const earthCircumferenceAtLat = EARTH_CIRCUMFERENCE_EQ * cosLat;
             
-            // 5. Скорость вращения Земли на данной широте (м/ч)
-            const rotationSpeedMh = earthCircumferenceAtLat / HOURS_IN_DAY;
+            // 5. Скорость вращения Земли на данной широте (м/с)
+            const rotationSpeedMs = earthCircumferenceAtLat / (HOURS_IN_DAY * SECONDS_IN_HOUR);
             
-            // 6. Орбитальная скорость (м/ч)
+            // 6. Орбитальная скорость (м/с)
             const orbitCircumference = 2 * Math.PI * distanceToSun;
-            const orbitalSpeedMh = orbitCircumference / (DAYS_IN_YEAR * HOURS_IN_DAY);
+            const orbitalSpeedMs = orbitCircumference / (DAYS_IN_YEAR * HOURS_IN_DAY * SECONDS_IN_HOUR);
             
-            // 7. Угол времени суток
-            const timeAngle = ((hours + minutes / MINUTES_IN_HOUR) / HOURS_IN_DAY) * 2 * Math.PI;
+            // 7. Угол времени суток (с учётом секунд)
+            const totalSeconds = hours * SECONDS_IN_HOUR + minutes * SECONDS_IN_MINUTE + seconds;
+            const timeAngle = (totalSeconds / (HOURS_IN_DAY * SECONDS_IN_HOUR)) * 2 * Math.PI;
             
             // 8. Направление вращения
             const directionFactor = Math.cos(timeAngle);
             
-            // 9. Общая скорость (м/ч)
-            const totalSpeedMh = orbitalSpeedMh + (rotationSpeedMh * directionFactor);
+            // 9. Общая скорость (м/с)
+            const totalSpeedMs = orbitalSpeedMs + (rotationSpeedMs * directionFactor);
             
-            return totalSpeedMh;
+            return totalSpeedMs;
         }
         
         // === ФУНКЦИЯ РАСЧЁТА РАССТОЯНИЯ МЕЖДУ ДВУМЯ МОМЕНТАМИ ===
@@ -448,20 +470,31 @@
             
             const startHours = parseFloat(document.getElementById('start-hours').value) || 0;
             const startMinutes = parseFloat(document.getElementById('start-minutes').value) || 0;
+            const startSeconds = parseFloat(document.getElementById('start-seconds').value) || 0;
             const startDay = parseFloat(document.getElementById('start-day').value) || 1;
             const startMonth = parseFloat(document.getElementById('start-month').value) || 1;
             
             const endHours = parseFloat(document.getElementById('end-hours').value) || 0;
             const endMinutes = parseFloat(document.getElementById('end-minutes').value) || 0;
+            const endSeconds = parseFloat(document.getElementById('end-seconds').value) || 0;
             const endDay = parseFloat(document.getElementById('end-day').value) || 1;
             const endMonth = parseFloat(document.getElementById('end-month').value) || 1;
             
-            // Переводим всё в минуты от начала года
-            const startTotalMinutes = (startMonth - 1) * 30 * 24 * 60 + (startDay - 1) * 24 * 60 + startHours * 60 + startMinutes;
-            const endTotalMinutes = (endMonth - 1) * 30 * 24 * 60 + (endDay - 1) * 24 * 60 + endHours * 60 + endMinutes;
+            // Переводим всё в секунды от начала года
+            const startTotalSeconds = (startMonth - 1) * 30 * 24 * 3600 + 
+                                      (startDay - 1) * 24 * 3600 + 
+                                      startHours * 3600 + 
+                                      startMinutes * 60 + 
+                                      startSeconds;
+            
+            const endTotalSeconds = (endMonth - 1) * 30 * 24 * 3600 + 
+                                    (endDay - 1) * 24 * 3600 + 
+                                    endHours * 3600 + 
+                                    endMinutes * 60 + 
+                                    endSeconds;
             
             // Проверяем что конец после начала
-            if (endTotalMinutes <= startTotalMinutes) {
+            if (endTotalSeconds <= startTotalSeconds) {
                 document.getElementById('total-distance').textContent = '0';
                 document.getElementById('min-speed').textContent = '0';
                 document.getElementById('max-speed').textContent = '0';
@@ -470,54 +503,61 @@
                 return;
             }
             
-            const totalMinutes = endTotalMinutes - startTotalMinutes;
-            const totalHours = totalMinutes / 60;
+            const totalSeconds = endTotalSeconds - startTotalSeconds;
+            const totalHours = totalSeconds / 3600;
             
             // Обновляем информацию о длительности
-            const hoursPart = Math.floor(totalHours);
-            const minutesPart = Math.round(totalMinutes % 60);
-            document.getElementById('duration-info').textContent = `Длительность периода: ${hoursPart} ч ${minutesPart} мин`;
+            const hoursPart = Math.floor(totalSeconds / 3600);
+            const minutesPart = Math.floor((totalSeconds % 3600) / 60);
+            const secondsPart = Math.round(totalSeconds % 60);
+            document.getElementById('duration-info').textContent = 
+                `Длительность периода: ${hoursPart} ч ${minutesPart} мин ${secondsPart} сек`;
             
-            // === ИНТЕГРИРОВАНИЕ: разбиваем на интервалы по 1 минуте ===
+            // === ИНТЕГРИРОВАНИЕ: разбиваем на интервалы по 1 секунде ===
             let totalDistanceMeters = 0;
             let minSpeed = Infinity;
             let maxSpeed = -Infinity;
             
-            for (let i = 0; i < totalMinutes; i++) {
-                const currentMinutes = startTotalMinutes + i;
+            // Оптимизация: для больших интервалов (> 1 часа) используем шаг 10 секунд
+            const stepSeconds = totalSeconds > 3600 ? 10 : 1;
+            
+            for (let i = 0; i < totalSeconds; i += stepSeconds) {
+                const currentSeconds = startTotalSeconds + i;
                 
-                // Переводим минуты обратно в дату и время
-                const remainingMinutes = currentMinutes;
-                const calcMonth = Math.floor(remainingMinutes / (30 * 24 * 60)) + 1;
-                const remainingAfterMonth = remainingMinutes % (30 * 24 * 60);
-                const calcDay = Math.floor(remainingAfterMonth / (24 * 60)) + 1;
-                const remainingAfterDay = remainingAfterMonth % (24 * 60);
-                const calcHours = Math.floor(remainingAfterDay / 60);
-                const calcMinutes = remainingAfterDay % 60;
+                // Переводим секунды обратно в дату и время
+                const remainingSeconds = currentSeconds;
+                const calcMonth = Math.floor(remainingSeconds / (30 * 24 * 3600)) + 1;
+                const remainingAfterMonth = remainingSeconds % (30 * 24 * 3600);
+                const calcDay = Math.floor(remainingAfterMonth / (24 * 3600)) + 1;
+                const remainingAfterDay = remainingAfterMonth % (24 * 3600);
+                const calcHours = Math.floor(remainingAfterDay / 3600);
+                const remainingAfterHours = remainingAfterDay % 3600;
+                const calcMinutes = Math.floor(remainingAfterHours / 60);
+                const calcSeconds = remainingAfterHours % 60;
                 
-                // Получаем мгновенную скорость в этой точке (м/ч)
-                const speedMh = getInstantSpeed(calcHours, calcMinutes, calcDay, calcMonth, latitude);
-                const speedMm = speedMh / 60; // метры в минуту
+                // Получаем мгновенную скорость в этой точке (м/с)
+                const speedMs = getInstantSpeedMs(calcHours, calcMinutes, calcSeconds, calcDay, calcMonth, latitude);
+                const distancePerStep = speedMs * stepSeconds; // метры за шаг
                 
-                // Добавляем расстояние за эту минуту
-                totalDistanceMeters += speedMm;
+                // Добавляем расстояние за этот шаг
+                totalDistanceMeters += distancePerStep;
                 
                 // Отслеживаем мин/макс скорость
-                if (speedMh < minSpeed) minSpeed = speedMh;
-                if (speedMh > maxSpeed) maxSpeed = speedMh;
+                if (speedMs < minSpeed) minSpeed = speedMs;
+                if (speedMs > maxSpeed) maxSpeed = speedMs;
             }
             
-            // Конвертируем в километры
+            // Конвертируем в километры и км/с
             const totalDistanceKm = totalDistanceMeters / 1000;
-            const minSpeedKmh = minSpeed / 1000;
-            const maxSpeedKmh = maxSpeed / 1000;
-            const avgSpeedKmh = totalDistanceKm / totalHours;
+            const minSpeedKms = minSpeed / 1000;
+            const maxSpeedKms = maxSpeed / 1000;
+            const avgSpeedKms = totalDistanceKm / totalSeconds;
             
-            // Вывод результатов
+            // Вывод результатов (5 знаков после запятой для км/с)
             document.getElementById('total-distance').textContent = totalDistanceKm.toFixed(2).replace('.', ',');
-            document.getElementById('min-speed').textContent = minSpeedKmh.toFixed(2).replace('.', ',');
-            document.getElementById('max-speed').textContent = maxSpeedKmh.toFixed(2).replace('.', ',');
-            document.getElementById('avg-speed').textContent = avgSpeedKmh.toFixed(2).replace('.', ',');
+            document.getElementById('min-speed').textContent = minSpeedKms.toFixed(5).replace('.', ',');
+            document.getElementById('max-speed').textContent = maxSpeedKms.toFixed(5).replace('.', ',');
+            document.getElementById('avg-speed').textContent = avgSpeedKms.toFixed(5).replace('.', ',');
         }
         
         // === АВТОМАТИЧЕСКИЙ РАСЧЁТ ПРИ ЗАГРУЗКЕ ===
