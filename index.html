@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор движения Земли</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #fff;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            color: #4fc3f7;
+        }
+        
+        h2 {
+            font-size: 18px;
+            color: #4fc3f7;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .input-row .input-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #b0bec5;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #4fc3f7;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .time-block {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .time-block.start {
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+        
+        .time-block.end {
+            border-color: rgba(255, 152, 0, 0.5);
+        }
+        
+        .time-block h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        .start h3 { color: #81c784; }
+        .end h3 { color: #ffb74d; }
+        
+        .results {
+            margin-top: 30px;
+            background: rgba(79, 195, 247, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(79, 195, 247, 0.3);
+        }
+        
+        .results h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 0;
+            font-size: 20px;
+            color: #4fc3f7;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-size: 16px;
+            color: #b0bec5;
+        }
+        
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4fc3f7;
+        }
+        
+        .result-value.min {
+            color: #81c784;
+        }
+        
+        .result-value.max {
+            color: #ffb74d;
+        }
+        
+        .result-unit {
+            font-size: 14px;
+            color: #78909c;
+            margin-left: 5px;
+        }
+        
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            font-size: 13px;
+            color: #78909c;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            color: #4fc3f7;
+            font-weight: bold;
+        }
+        
+        .warning {
+            color: #ffb74d;
+            font-weight: bold;
+        }
+        
+        .duration-info {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #90a4ae;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Калькулятор движения Земли</h1>
+        
+        <div class="input-group">
+            <label>Широта города (градусы) 📍</label>
+            <input type="number" id="latitude" min="-90" max="90" value="56" placeholder="-90 до 90" step="0.1">
+        </div>
+        
+        <h2>🟢 Начальный момент</h2>
+        <div class="time-block start">
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Часы</label>
+                    <input type="number" id="start-hours" min="0" max="23" value="12" placeholder="0-23">
+                </div>
+                <div class="input-group">
+                    <label>Минуты</label>
+                    <input type="number" id="start-minutes" min="0" max="59" value="0" placeholder="0-59">
+                </div>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>День</label>
+                    <input type="number" id="start-day" min="1" max="31" value="3" placeholder="1-31">
+                </div>
+                <div class="input-group">
+                    <label>Месяц</label>
+                    <input type="number" id="start-month" min="1" max="12" value="1" placeholder="1-12">
+                </div>
+            </div>
+        </div>
+        
+        <h2>🔴 Конечный момент</h2>
+        <div class="time-block end">
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Часы</label>
+                    <input type="number" id="end-hours" min="0" max="23" value="13" placeholder="0-23">
+                </div>
+                <div class="input-group">
+                    <label>Минуты</label>
+                    <input type="number" id="end-minutes" min="0" max="59" value="0" placeholder="0-59">
+                </div>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>День</label>
+                    <input type="number" id="end-day" min="1" max="31" value="3" placeholder="1-31">
+                </div>
+                <div class="input-group">
+                    <label>Месяц</label>
+                    <input type="number" id="end-month" min="1" max="12" value="1" placeholder="1-12">
+                </div>
+            </div>
+        </div>
+        
+        <div class="results">
+            <h2>📊 Результаты</h2>
+            
+            <div class="duration-info" id="duration-info">
+                Длительность периода: 0 ч 0 мин
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">📍 Пройденное расстояние</span>
+                <span>
+                    <span class="result-value" id="total-distance">0</span>
+                    <span class="result-unit">км</span>
+                </span>
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">📉 Минимальная скорость</span>
+                <span>
+                    <span class="result-value min" id="min-speed">0</span>
+                    <span class="result-unit">км/ч</span>
+                </span>
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">📈 Максимальная скорость</span>
+                <span>
+                    <span class="result-value max" id="max-speed">0</span>
+                    <span class="result-unit">км/ч</span>
+                </span>
+            </div>
+            
+            <!-- <div class="result-item">
+                <span class="result-label">📊 Средняя скорость</span>
+                <span>
+                    <span class="result-value" id="avg-speed">0</span>
+                    <span class="result-unit">км/ч</span>
+                </span>
+            </div> -->
+        </div>
+        
+        <div class="info">
+            💡 Результаты обновляются <span class="highlight">мгновенно</span>.<br>
+            🌐 <strong>Широта</strong> влияет на скорость вращения Земли (cos широты).<br>
+            📅 <strong>Дата</strong> влияет на расстояние до Солнца.<br>
+            ⏰ <strong>Время</strong> влияет на направление вращения.<br>
+            <span class="warning">⚠️ Расчёт учитывает изменение скорости во времени (интегрирование)</span>
+        </div>
+    </div>
+
+    <script>
+        // === КОНСТАНТЫ ===
+        const EARTH_CIRCUMFERENCE_EQ = 40075016; // Окружность Земли на экваторе, метры
+        const AVG_DISTANCE_TO_SUN = 149597870700; // среднее расстояние, метры
+        const VARIATION = 2500362300; // ±2.5 млн км
+        const DAYS_IN_YEAR = 365;
+        const HOURS_IN_DAY = 24;
+        const MINUTES_IN_HOUR = 60;
+        
+        // === ФУНКЦИЯ РАСЧЁТА МГНОВЕННОЙ СКОРОСТИ (м/ч) ===
+        function getInstantSpeed(hours, minutes, day, month, latitude) {
+            // 1. День года
+            const dayOfYear = (month - 1) * 30 + day;
+            
+            // 2. Расстояние до Солнца (зависит от даты)
+            const distanceToSun = AVG_DISTANCE_TO_SUN + VARIATION * Math.cos((dayOfYear / DAYS_IN_YEAR) * 2 * Math.PI);
+            
+            // 3. Косинус широты
+            const latRad = latitude * Math.PI / 180;
+            const cosLat = Math.cos(latRad);
+            
+            // 4. Окружность Земли на данной широте (метры)
+            const earthCircumferenceAtLat = EARTH_CIRCUMFERENCE_EQ * cosLat;
+            
+            // 5. Скорость вращения Земли на данной широте (м/ч)
+            const rotationSpeedMh = earthCircumferenceAtLat / HOURS_IN_DAY;
+            
+            // 6. Орбитальная скорость (м/ч)
+            const orbitCircumference = 2 * Math.PI * distanceToSun;
+            const orbitalSpeedMh = orbitCircumference / (DAYS_IN_YEAR * HOURS_IN_DAY);
+            
+            // 7. Угол времени суток
+            const timeAngle = ((hours + minutes / MINUTES_IN_HOUR) / HOURS_IN_DAY) * 2 * Math.PI;
+            
+            // 8. Направление вращения
+            const directionFactor = Math.cos(timeAngle);
+            
+            // 9. Общая скорость (м/ч)
+            const totalSpeedMh = orbitalSpeedMh + (rotationSpeedMh * directionFactor);
+            
+            return totalSpeedMh;
+        }
+        
+        // === ФУНКЦИЯ РАСЧЁТА РАССТОЯНИЯ МЕЖДУ ДВУМЯ МОМЕНТАМИ ===
+        function calculateDistanceAndSpeeds() {
+            // Получаем начальные данные
+            const latitude = parseFloat(document.getElementById('latitude').value) || 0;
+            
+            const startHours = parseFloat(document.getElementById('start-hours').value) || 0;
+            const startMinutes = parseFloat(document.getElementById('start-minutes').value) || 0;
+            const startDay = parseFloat(document.getElementById('start-day').value) || 1;
+            const startMonth = parseFloat(document.getElementById('start-month').value) || 1;
+            
+            const endHours = parseFloat(document.getElementById('end-hours').value) || 0;
+            const endMinutes = parseFloat(document.getElementById('end-minutes').value) || 0;
+            const endDay = parseFloat(document.getElementById('end-day').value) || 1;
+            const endMonth = parseFloat(document.getElementById('end-month').value) || 1;
+            
+            // Переводим всё в минуты от начала года
+            const startTotalMinutes = (startMonth - 1) * 30 * 24 * 60 + (startDay - 1) * 24 * 60 + startHours * 60 + startMinutes;
+            const endTotalMinutes = (endMonth - 1) * 30 * 24 * 60 + (endDay - 1) * 24 * 60 + endHours * 60 + endMinutes;
+            
+            // Проверяем что конец после начала
+            if (endTotalMinutes <= startTotalMinutes) {
+                document.getElementById('total-distance').textContent = '0';
+                document.getElementById('min-speed').textContent = '0';
+                document.getElementById('max-speed').textContent = '0';
+                document.getElementById('avg-speed').textContent = '0';
+                document.getElementById('duration-info').textContent = '⚠️ Конечный момент должен быть после начального';
+                return;
+            }
+            
+            const totalMinutes = endTotalMinutes - startTotalMinutes;
+            const totalHours = totalMinutes / 60;
+            
+            // Обновляем информацию о длительности
+            const hoursPart = Math.floor(totalHours);
+            const minutesPart = Math.round(totalMinutes % 60);
+            document.getElementById('duration-info').textContent = `Длительность периода: ${hoursPart} ч ${minutesPart} мин`;
+            
+            // === ИНТЕГРИРОВАНИЕ: разбиваем на интервалы по 1 минуте ===
+            let totalDistanceMeters = 0;
+            let minSpeed = Infinity;
+            let maxSpeed = -Infinity;
+            
+            for (let i = 0; i < totalMinutes; i++) {
+                const currentMinutes = startTotalMinutes + i;
+                
+                // Переводим минуты обратно в дату и время
+                const remainingMinutes = currentMinutes;
+                const calcMonth = Math.floor(remainingMinutes / (30 * 24 * 60)) + 1;
+                const remainingAfterMonth = remainingMinutes % (30 * 24 * 60);
+                const calcDay = Math.floor(remainingAfterMonth / (24 * 60)) + 1;
+                const remainingAfterDay = remainingAfterMonth % (24 * 60);
+                const calcHours = Math.floor(remainingAfterDay / 60);
+                const calcMinutes = remainingAfterDay % 60;
+                
+                // Получаем мгновенную скорость в этой точке (м/ч)
+                const speedMh = getInstantSpeed(calcHours, calcMinutes, calcDay, calcMonth, latitude);
+                const speedMm = speedMh / 60; // метры в минуту
+                
+                // Добавляем расстояние за эту минуту
+                totalDistanceMeters += speedMm;
+                
+                // Отслеживаем мин/макс скорость
+                if (speedMh < minSpeed) minSpeed = speedMh;
+                if (speedMh > maxSpeed) maxSpeed = speedMh;
+            }
+            
+            // Конвертируем в километры
+            const totalDistanceKm = totalDistanceMeters / 1000;
+            const minSpeedKmh = minSpeed / 1000;
+            const maxSpeedKmh = maxSpeed / 1000;
+            const avgSpeedKmh = totalDistanceKm / totalHours;
+            
+            // Вывод результатов
+            document.getElementById('total-distance').textContent = totalDistanceKm.toFixed(2).replace('.', ',');
+            document.getElementById('min-speed').textContent = minSpeedKmh.toFixed(2).replace('.', ',');
+            document.getElementById('max-speed').textContent = maxSpeedKmh.toFixed(2).replace('.', ',');
+            document.getElementById('avg-speed').textContent = avgSpeedKmh.toFixed(2).replace('.', ',');
+        }
+        
+        // === АВТОМАТИЧЕСКИЙ РАСЧЁТ ПРИ ЗАГРУЗКЕ ===
+        window.onload = calculateDistanceAndSpeeds;
+        
+        // === АВТОМАТИЧЕСКИЙ РАСЧЁТ ПРИ ЛЮБОМ ИЗМЕНЕНИИ ===
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculateDistanceAndSpeeds);
+        });
+    </script>
+</body>
+</html>
