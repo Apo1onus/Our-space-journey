@@ -431,7 +431,7 @@
         // === ФУНКЦИЯ РАСЧЁТА МГНОВЕННОЙ СКОРОСТИ (м/с) ===
         function getInstantSpeedMs(hours, minutes, seconds, day, month, latitude) {
             // 1. День года
-            const dayOfYear = (month - 1) * 30,416 + day;
+            const dayOfYear = (month - 1) * 30.416666666 + day;
             
             // 2. Расстояние до Солнца (зависит от даты)
             const distanceToSun = AVG_DISTANCE_TO_SUN + VARIATION * Math.cos((dayOfYear / DAYS_IN_YEAR) * 2 * Math.PI);
@@ -570,6 +570,7 @@
     </script>
 </body>
 </html>
+
 
 
 
