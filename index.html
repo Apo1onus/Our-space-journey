@@ -107,7 +107,6 @@
             margin: 0;
         }
         
-        /* Кнопка геолокации */
         .geo-btn {
             padding: 10px 15px;
             background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
@@ -312,6 +311,7 @@
             margin-top: 10px;
         }
         
+        /* === МОБИЛЬНАЯ АДАПТАЦИЯ === */
         @media (max-width: 480px) {
             body {
                 padding: 15px 10px;
@@ -336,6 +336,41 @@
                 gap: 10px;
             }
             
+            .input-row .input-group {
+                width: 100%;
+                flex: none;
+            }
+            
+            /* Время и дата в отдельные строки на мобильном */
+            .time-row {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .time-row .input-group {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .date-row {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .date-row .input-group {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            /* Увеличенные поля ввода для пальцев */
+            input {
+                padding: 14px 12px;
+                font-size: 18px;
+                min-height: 50px;
+            }
+            
             .input-group-with-button {
                 flex-direction: column;
                 align-items: stretch;
@@ -344,6 +379,9 @@
             .geo-btn {
                 width: 100%;
                 justify-content: center;
+                padding: 14px 20px;
+                font-size: 16px;
+                min-height: 50px;
             }
             
             .result-item {
@@ -373,7 +411,25 @@
             }
             
             .time-block {
-                padding: 12px;
+                padding: 15px;
+            }
+            
+            .time-block h3 {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            
+            /* Разделитель между временем и датой на мобильном */
+            .mobile-divider {
+                height: 1px;
+                background: rgba(255, 255, 255, 0.1);
+                margin: 10px 0 15px 0;
+            }
+            
+            /* Подписи полей крупнее на мобильном */
+            label {
+                font-size: 14px;
+                margin-bottom: 8px;
             }
         }
         
@@ -384,6 +440,23 @@
             
             .result-label {
                 font-size: 12px;
+            }
+            
+            input {
+                padding: 12px 10px;
+                font-size: 16px;
+                min-height: 45px;
+            }
+            
+            .geo-btn {
+                padding: 12px 15px;
+                font-size: 14px;
+                min-height: 45px;
+            }
+            
+            .time-row,
+            .date-row {
+                gap: 8px;
             }
         }
     </style>
@@ -408,56 +481,68 @@
         
         <h2>🟢 Начальный момент</h2>
         <div class="time-block start">
-            <div class="input-row">
+            <!-- Время -->
+            <div class="time-row">
                 <div class="input-group">
-                    <label>Часы</label>
-                    <input type="number" id="start-hours" min="0" max="23" value="0" placeholder="0-23">
+                    <label>⏰ Часы</label>
+                    <input type="number" id="start-hours" min="0" max="23" value="0" placeholder="00">
                 </div>
                 <div class="input-group">
                     <label>Минуты</label>
-                    <input type="number" id="start-minutes" min="0" max="59" value="0" placeholder="0-59">
+                    <input type="number" id="start-minutes" min="0" max="59" value="0" placeholder="00">
                 </div>
                 <div class="input-group">
                     <label>Секунды</label>
-                    <input type="number" id="start-seconds" min="0" max="59" value="0" placeholder="0-59">
+                    <input type="number" id="start-seconds" min="0" max="59" value="0" placeholder="00">
                 </div>
             </div>
-            <div class="input-row">
+            
+            <!-- Разделитель для мобильного -->
+            <div class="mobile-divider"></div>
+            
+            <!-- Дата -->
+            <div class="date-row">
                 <div class="input-group">
-                    <label>День</label>
-                    <input type="number" id="start-day" min="1" max="31" value="1" placeholder="1-31">
+                    <label>📅 День</label>
+                    <input type="number" id="start-day" min="1" max="31" value="1" placeholder="01">
                 </div>
                 <div class="input-group">
                     <label>Месяц</label>
-                    <input type="number" id="start-month" min="1" max="12" value="1" placeholder="1-12">
+                    <input type="number" id="start-month" min="1" max="12" value="1" placeholder="01">
                 </div>
             </div>
         </div>
         
         <h2>🔴 Конечный момент</h2>
         <div class="time-block end">
-            <div class="input-row">
+            <!-- Время -->
+            <div class="time-row">
                 <div class="input-group">
-                    <label>Часы</label>
-                    <input type="number" id="end-hours" min="0" max="23" value="23" placeholder="0-23">
+                    <label>⏰ Часы</label>
+                    <input type="number" id="end-hours" min="0" max="23" value="23" placeholder="00">
                 </div>
                 <div class="input-group">
                     <label>Минуты</label>
-                    <input type="number" id="end-minutes" min="0" max="59" value="59" placeholder="0-59">
+                    <input type="number" id="end-minutes" min="0" max="59" value="59" placeholder="00">
                 </div>
                 <div class="input-group">
                     <label>Секунды</label>
-                    <input type="number" id="end-seconds" min="0" max="59" value="59" placeholder="0-59">
+                    <input type="number" id="end-seconds" min="0" max="59" value="59" placeholder="00">
                 </div>
             </div>
-            <div class="input-row">
+            
+            <!-- Разделитель для мобильного -->
+            <div class="mobile-divider"></div>
+            
+            <!-- Дата -->
+            <div class="date-row">
                 <div class="input-group">
-                    <label>День</label>
-                    <input type="number" id="end-day" min="1" max="31" value="31" placeholder="1-31">
+                    <label>📅 День</label>
+                    <input type="number" id="end-day" min="1" max="31" value="31" placeholder="01">
                 </div>
                 <div class="input-group">
                     <label>Месяц</label>
-                    <input type="number" id="end-month" min="1" max="12" value="12" placeholder="1-12">
+                    <input type="number" id="end-month" min="1" max="12" value="12" placeholder="01">
                 </div>
             </div>
         </div>
@@ -515,97 +600,59 @@
 
     <script>
         // === КОНСТАНТЫ ИЗ EXCEL ТАБЛИЦЫ ===
-        const EARTH_CIRCUMFERENCE_EQ = 40075016; // Окружность Земли на экваторе, метры
-        const AVG_DISTANCE_TO_SUN = 149597870700; // среднее расстояние, метры
-        const VARIATION = 2500362300; // ±2.5 млн км
+        const EARTH_CIRCUMFERENCE_EQ = 40075016;
+        const AVG_DISTANCE_TO_SUN = 149597870700;
+        const VARIATION = 2500362300;
         const DAYS_IN_YEAR = 365;
         const HOURS_IN_DAY = 24;
         const MINUTES_IN_HOUR = 60;
         const SECONDS_IN_MINUTE = 60;
         const SECONDS_IN_HOUR = 3600;
         
-        // === ДНИ В КАЖДОМ МЕСЯЦЕ ===
         const DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         
-        // === ПРОВЕРКА ВИСОКОСНОГО ГОДА ===
         function isLeapYear(year = 2024) {
             return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
         }
         
-        // === ДЕНЬ ГОДА (с учётом реального количества дней в месяцах) ===
         function getDayOfYear(day, month, year = 2024) {
             let dayOfYear = 0;
-            
             for (let m = 1; m < month; m++) {
-                if (m === 2 && isLeapYear(year)) {
-                    dayOfYear += 29;
-                } else {
-                    dayOfYear += DAYS_IN_MONTH[m];
-                }
+                dayOfYear += (m === 2 && isLeapYear(year)) ? 29 : DAYS_IN_MONTH[m];
             }
-            
             dayOfYear += day;
-            
             return dayOfYear;
         }
         
-        // === МЕСЯЦ И ДЕНЬ ИЗ ДНЯ ГОДА ===
         function getMonthAndDayFromDayOfYear(dayOfYear, year = 2024) {
             let dayCounter = 0;
-            let month = 1;
-            let day = 1;
-            
             for (let m = 1; m <= 12; m++) {
                 const daysInThisMonth = (m === 2 && isLeapYear(year)) ? 29 : DAYS_IN_MONTH[m];
                 if (dayCounter + daysInThisMonth >= dayOfYear) {
-                    month = m;
-                    day = dayOfYear - dayCounter;
-                    break;
+                    return { month: m, day: dayOfYear - dayCounter };
                 }
                 dayCounter += daysInThisMonth;
             }
-            
-            return { month, day };
+            return { month: 12, day: 31 };
         }
         
-        // === ФУНКЦИЯ РАСЧЁТА МГНОВЕННОЙ СКОРОСТИ (м/с) ===
         function getInstantSpeedMs(hours, minutes, seconds, day, month, latitude, year = 2024) {
-            // 1. День года (с учётом реального количества дней в месяцах)
             const dayOfYear = getDayOfYear(day, month, year);
-            
-            // 2. Расстояние до Солнца (зависит от даты)
             const distanceToSun = AVG_DISTANCE_TO_SUN + VARIATION * Math.cos((dayOfYear / DAYS_IN_YEAR) * 2 * Math.PI);
-            
-            // 3. Косинус широты
             const latRad = latitude * Math.PI / 180;
             const cosLat = Math.cos(latRad);
-            
-            // 4. Окружность Земли на данной широте (метры)
             const earthCircumferenceAtLat = EARTH_CIRCUMFERENCE_EQ * cosLat;
-            
-            // 5. Скорость вращения Земли на данной широте (м/с)
             const rotationSpeedMs = earthCircumferenceAtLat / (HOURS_IN_DAY * SECONDS_IN_HOUR);
-            
-            // 6. Орбитальная скорость (м/с)
             const orbitCircumference = 2 * Math.PI * distanceToSun;
             const orbitalSpeedMs = orbitCircumference / (DAYS_IN_YEAR * HOURS_IN_DAY * SECONDS_IN_HOUR);
-            
-            // 7. Угол времени суток (с учётом секунд)
             const totalSeconds = hours * SECONDS_IN_HOUR + minutes * SECONDS_IN_MINUTE + seconds;
             const timeAngle = (totalSeconds / (HOURS_IN_DAY * SECONDS_IN_HOUR)) * 2 * Math.PI;
-            
-            // 8. Направление вращения
             const directionFactor = Math.cos(timeAngle);
-            
-            // 9. Общая скорость (м/с)
             const totalSpeedMs = orbitalSpeedMs + (rotationSpeedMs * directionFactor);
-            
             return totalSpeedMs;
         }
         
-        // === ФУНКЦИЯ РАСЧЁТА РАССТОЯНИЯ МЕЖДУ ДВУМЯ МОМЕНТАМИ ===
         function calculateDistanceAndSpeeds() {
-            // Получаем начальные данные
             const latitude = parseFloat(document.getElementById('latitude').value) || 0;
             const year = 2024;
             
@@ -621,22 +668,12 @@
             const endDay = parseFloat(document.getElementById('end-day').value) || 1;
             const endMonth = parseFloat(document.getElementById('end-month').value) || 1;
             
-            // ✅ ИСПРАВЛЕНО: Используем реальное количество дней в месяцах
             const startDayOfYear = getDayOfYear(startDay, startMonth, year);
             const endDayOfYear = getDayOfYear(endDay, endMonth, year);
             
-            // Переводим всё в секунды от начала года
-            const startTotalSeconds = (startDayOfYear - 1) * 24 * 3600 + 
-                                      startHours * 3600 + 
-                                      startMinutes * 60 + 
-                                      startSeconds;
+            const startTotalSeconds = (startDayOfYear - 1) * 24 * 3600 + startHours * 3600 + startMinutes * 60 + startSeconds;
+            const endTotalSeconds = (endDayOfYear - 1) * 24 * 3600 + endHours * 3600 + endMinutes * 60 + endSeconds;
             
-            const endTotalSeconds = (endDayOfYear - 1) * 24 * 3600 + 
-                                    endHours * 3600 + 
-                                    endMinutes * 60 + 
-                                    endSeconds;
-            
-            // Проверяем что конец после начала
             if (endTotalSeconds <= startTotalSeconds) {
                 document.getElementById('total-distance').textContent = '0';
                 document.getElementById('min-speed').textContent = '0';
@@ -649,7 +686,6 @@
             const totalSeconds = endTotalSeconds - startTotalSeconds;
             const totalDays = totalSeconds / (24 * 3600);
             
-            // Обновляем информацию о длительности
             const daysPart = Math.floor(totalDays);
             const hoursPart = Math.floor((totalDays % 1) * 24);
             const minutesPart = Math.floor((totalSeconds % 3600) / 60);
@@ -658,18 +694,14 @@
             document.getElementById('duration-info').textContent = 
                 `Длительность периода: ${daysPart} дн ${hoursPart} ч ${minutesPart} мин ${secondsPart} сек`;
             
-            // === ИНТЕГРИРОВАНИЕ: разбиваем на интервалы по 1 секунде ===
             let totalDistanceMeters = 0;
             let minSpeed = Infinity;
             let maxSpeed = -Infinity;
             
-            // Оптимизация: для больших интервалов (> 1 часа) используем шаг 10 секунд
             const stepSeconds = totalSeconds > 3600 ? 10 : 1;
             
             for (let i = 0; i < totalSeconds; i += stepSeconds) {
                 const currentSeconds = startTotalSeconds + i;
-                
-                // Переводим секунды обратно в дату и время
                 const daysFromStart = Math.floor(currentSeconds / (24 * 3600));
                 const remainingSeconds = currentSeconds % (24 * 3600);
                 const calcHours = Math.floor(remainingSeconds / 3600);
@@ -677,82 +709,59 @@
                 const calcMinutes = Math.floor(remainingAfterHours / 60);
                 const calcSeconds = remainingAfterHours % 60;
                 
-                // Находим месяц и день из дня года
                 const dayOfYear = daysFromStart + 1;
                 const { month: calcMonth, day: calcDay } = getMonthAndDayFromDayOfYear(dayOfYear, year);
                 
-                // Получаем мгновенную скорость в этой точке (м/с)
                 const speedMs = getInstantSpeedMs(calcHours, calcMinutes, calcSeconds, calcDay, calcMonth, latitude, year);
-                const distancePerStep = speedMs * stepSeconds; // метры за шаг
-                
-                // Добавляем расстояние за этот шаг
+                const distancePerStep = speedMs * stepSeconds;
                 totalDistanceMeters += distancePerStep;
                 
-                // Отслеживаем мин/макс скорость
                 if (speedMs < minSpeed) minSpeed = speedMs;
                 if (speedMs > maxSpeed) maxSpeed = speedMs;
             }
             
-            // Конвертируем в километры и км/с
             const totalDistanceKm = totalDistanceMeters / 1000;
             const minSpeedKms = minSpeed / 1000;
             const maxSpeedKms = maxSpeed / 1000;
             const avgSpeedKms = totalDistanceKm / totalSeconds;
             
-            // Вывод результатов (5 знаков после запятой для км/с)
             document.getElementById('total-distance').textContent = totalDistanceKm.toFixed(2).replace('.', ',');
             document.getElementById('min-speed').textContent = minSpeedKms.toFixed(5).replace('.', ',');
             document.getElementById('max-speed').textContent = maxSpeedKms.toFixed(5).replace('.', ',');
             document.getElementById('avg-speed').textContent = avgSpeedKms.toFixed(5).replace('.', ',');
         }
         
-        // === ГЕОЛОКАЦИЯ: ПОЛУЧЕНИЕ ШИРОТЫ ПОЛЬЗОВАТЕЛЯ ===
         function getGeolocation() {
             const geoBtn = document.getElementById('geo-btn');
             const geoBtnText = document.getElementById('geo-btn-text');
             const geoStatus = document.getElementById('geo-status');
             const latitudeInput = document.getElementById('latitude');
             
-            // Проверяем поддержку геолокации
             if (!navigator.geolocation) {
                 showGeoStatus('error', '❌ Геолокация не поддерживается вашим браузером');
                 return;
             }
             
-            // Показываем состояние загрузки
             geoBtn.disabled = true;
             geoBtn.classList.add('loading');
             geoBtnText.textContent = 'Определяем...';
             geoStatus.className = 'geo-status info';
             geoStatus.textContent = '📡 Запрос разрешения на доступ к геопозиции...';
             
-            // Запрашиваем геолокацию
             navigator.geolocation.getCurrentPosition(
-                // ✅ УСПЕХ
                 function(position) {
                     const latitude = position.coords.latitude.toFixed(4);
-                    const longitude = position.coords.longitude.toFixed(4);
                     const accuracy = Math.round(position.coords.accuracy);
-                    
-                    // Подставляем широту в поле
                     latitudeInput.value = latitude;
-                    
-                    // Показываем успех
                     showGeoStatus('success', `✅ Широта определена: ${latitude}° (точность: ${accuracy}м)`);
-                    
-                    // Пересчитываем результаты с новой широтой
                     calculateDistanceAndSpeeds();
-                    
-                    // Возвращаем кнопку в исходное состояние
                     resetGeoButton();
                 },
-                // ❌ ОШИБКА
                 function(error) {
                     let errorMessage = '';
-                    
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '❌ Доступ к геолокации запрещен. Разрешите доступ в настройках браузера.';
+                            errorMessage = '❌ Доступ к геолокации запрещен.';
                             break;
                         case error.POSITION_UNAVAILABLE:
                             errorMessage = '❌ Информация о местоположении недоступна.';
@@ -763,40 +772,33 @@
                         default:
                             errorMessage = '❌ Произошла неизвестная ошибка.';
                     }
-                    
                     showGeoStatus('error', errorMessage);
                     resetGeoButton();
                 },
-                // ⚙️ ОПЦИИ
                 {
-                    enableHighAccuracy: true, // Высокая точность (GPS)
-                    timeout: 10000, // Таймаут 10 секунд
-                    maximumAge: 300000 // Кэш 5 минут
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 300000
                 }
             );
         }
         
-        // === ПОКАЗАТЬ СТАТУС ГЕОЛОКАЦИИ ===
         function showGeoStatus(type, message) {
             const geoStatus = document.getElementById('geo-status');
             geoStatus.className = `geo-status ${type}`;
             geoStatus.textContent = message;
         }
         
-        // === СБРОСИТЬ КНОПКУ ГЕОЛОКАЦИИ ===
         function resetGeoButton() {
             const geoBtn = document.getElementById('geo-btn');
             const geoBtnText = document.getElementById('geo-btn-text');
-            
             geoBtn.disabled = false;
             geoBtn.classList.remove('loading');
             geoBtnText.textContent = 'Определить';
         }
         
-        // === АВТОМАТИЧЕСКИЙ РАСЧЁТ ПРИ ЗАГРУЗКЕ ===
         window.onload = calculateDistanceAndSpeeds;
         
-        // === АВТОМАТИЧЕСКИЙ РАСЧЁТ ПРИ ЛЮБОМ ИЗМЕНЕНИИ ===
         document.querySelectorAll('input').forEach(input => {
             input.addEventListener('input', calculateDistanceAndSpeeds);
         });
