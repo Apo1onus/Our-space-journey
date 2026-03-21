@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="logo.webp" /><title>Калькулятор движения Земли</title>
+    <title>Калькулятор движения Земли</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <style>
         * {
             box-sizing: border-box;
@@ -52,12 +53,23 @@
             display: flex;
             gap: 12px;
             margin-bottom: 12px;
+            align-items: flex-end;
         }
         
         .input-row .input-group {
             flex: 1;
             margin-bottom: 0;
             min-width: 0;
+        }
+        
+        .input-group-with-button {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        
+        .input-group-with-button .input-group {
+            flex: 1;
         }
         
         label {
@@ -93,6 +105,73 @@
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
+        }
+        
+        /* Кнопка геолокации */
+        .geo-btn {
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+            border: none;
+            border-radius: 10px;
+            color: #1a1a2e;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        
+        .geo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(79, 195, 247, 0.4);
+        }
+        
+        .geo-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .geo-btn.loading {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .geo-status {
+            font-size: 12px;
+            margin-top: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .geo-status.success {
+            display: block;
+            background: rgba(76, 175, 80, 0.2);
+            color: #81c784;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .geo-status.error {
+            display: block;
+            background: rgba(244, 67, 54, 0.2);
+            color: #ef5350;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        
+        .geo-status.info {
+            display: block;
+            background: rgba(79, 195, 247, 0.2);
+            color: #4fc3f7;
+            border: 1px solid rgba(79, 195, 247, 0.3);
         }
         
         .time-block {
@@ -257,6 +336,16 @@
                 gap: 10px;
             }
             
+            .input-group-with-button {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .geo-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
             .result-item {
                 flex-direction: column;
                 align-items: flex-start;
@@ -305,7 +394,16 @@
         
         <div class="input-group">
             <label>Широта города (градусы) 📍</label>
-            <input type="number" id="latitude" min="-90" max="90" value="56" placeholder="-90 до 90" step="0.1">
+            <div class="input-group-with-button">
+                <div class="input-group">
+                    <input type="number" id="latitude" min="-90" max="90" value="56" placeholder="-90 до 90" step="0.1">
+                </div>
+                <button class="geo-btn" id="geo-btn" onclick="getGeolocation()">
+                    <span>📍</span>
+                    <span id="geo-btn-text">Определить</span>
+                </button>
+            </div>
+            <div class="geo-status" id="geo-status"></div>
         </div>
         
         <h2>🟢 Начальный момент</h2>
@@ -313,7 +411,7 @@
             <div class="input-row">
                 <div class="input-group">
                     <label>Часы</label>
-                    <input type="number" id="start-hours" min="0" max="23" value="12" placeholder="0-23">
+                    <input type="number" id="start-hours" min="0" max="23" value="0" placeholder="0-23">
                 </div>
                 <div class="input-group">
                     <label>Минуты</label>
@@ -327,7 +425,7 @@
             <div class="input-row">
                 <div class="input-group">
                     <label>День</label>
-                    <input type="number" id="start-day" min="1" max="31" value="3" placeholder="1-31">
+                    <input type="number" id="start-day" min="1" max="31" value="1" placeholder="1-31">
                 </div>
                 <div class="input-group">
                     <label>Месяц</label>
@@ -341,25 +439,25 @@
             <div class="input-row">
                 <div class="input-group">
                     <label>Часы</label>
-                    <input type="number" id="end-hours" min="0" max="23" value="12" placeholder="0-23">
+                    <input type="number" id="end-hours" min="0" max="23" value="23" placeholder="0-23">
                 </div>
                 <div class="input-group">
                     <label>Минуты</label>
-                    <input type="number" id="end-minutes" min="0" max="59" value="1" placeholder="0-59">
+                    <input type="number" id="end-minutes" min="0" max="59" value="59" placeholder="0-59">
                 </div>
                 <div class="input-group">
                     <label>Секунды</label>
-                    <input type="number" id="end-seconds" min="0" max="59" value="0" placeholder="0-59">
+                    <input type="number" id="end-seconds" min="0" max="59" value="59" placeholder="0-59">
                 </div>
             </div>
             <div class="input-row">
                 <div class="input-group">
                     <label>День</label>
-                    <input type="number" id="end-day" min="1" max="31" value="3" placeholder="1-31">
+                    <input type="number" id="end-day" min="1" max="31" value="31" placeholder="1-31">
                 </div>
                 <div class="input-group">
                     <label>Месяц</label>
-                    <input type="number" id="end-month" min="1" max="12" value="1" placeholder="1-12">
+                    <input type="number" id="end-month" min="1" max="12" value="12" placeholder="1-12">
                 </div>
             </div>
         </div>
@@ -368,7 +466,7 @@
             <h2>📊 Результаты</h2>
             
             <div class="duration-info" id="duration-info">
-                Длительность периода: 0 ч 0 мин 0 сек
+                Длительность периода: 0 дн 0 ч 0 мин 0 сек
             </div>
             
             <div class="result-item">
@@ -403,9 +501,7 @@
                 </div>
             </div>
             
-            <!--<div style="text-align: center;">
-                <span class="precision-badge">⚡ Интегрирование по секундам</span>
-            </div>-->
+            
         </div>
         
         <div class="info">
@@ -418,7 +514,7 @@
     </div>
 
     <script>
-        // === КОНСТАНТЫ ===
+        // === КОНСТАНТЫ ИЗ EXCEL ТАБЛИЦЫ ===
         const EARTH_CIRCUMFERENCE_EQ = 40075016; // Окружность Земли на экваторе, метры
         const AVG_DISTANCE_TO_SUN = 149597870700; // среднее расстояние, метры
         const VARIATION = 2500362300; // ±2.5 млн км
@@ -428,10 +524,54 @@
         const SECONDS_IN_MINUTE = 60;
         const SECONDS_IN_HOUR = 3600;
         
+        // === ДНИ В КАЖДОМ МЕСЯЦЕ ===
+        const DAYS_IN_MONTH = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        
+        // === ПРОВЕРКА ВИСОКОСНОГО ГОДА ===
+        function isLeapYear(year = 2024) {
+            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        }
+        
+        // === ДЕНЬ ГОДА (с учётом реального количества дней в месяцах) ===
+        function getDayOfYear(day, month, year = 2024) {
+            let dayOfYear = 0;
+            
+            for (let m = 1; m < month; m++) {
+                if (m === 2 && isLeapYear(year)) {
+                    dayOfYear += 29;
+                } else {
+                    dayOfYear += DAYS_IN_MONTH[m];
+                }
+            }
+            
+            dayOfYear += day;
+            
+            return dayOfYear;
+        }
+        
+        // === МЕСЯЦ И ДЕНЬ ИЗ ДНЯ ГОДА ===
+        function getMonthAndDayFromDayOfYear(dayOfYear, year = 2024) {
+            let dayCounter = 0;
+            let month = 1;
+            let day = 1;
+            
+            for (let m = 1; m <= 12; m++) {
+                const daysInThisMonth = (m === 2 && isLeapYear(year)) ? 29 : DAYS_IN_MONTH[m];
+                if (dayCounter + daysInThisMonth >= dayOfYear) {
+                    month = m;
+                    day = dayOfYear - dayCounter;
+                    break;
+                }
+                dayCounter += daysInThisMonth;
+            }
+            
+            return { month, day };
+        }
+        
         // === ФУНКЦИЯ РАСЧЁТА МГНОВЕННОЙ СКОРОСТИ (м/с) ===
-        function getInstantSpeedMs(hours, minutes, seconds, day, month, latitude) {
-            // 1. День года
-            const dayOfYear = (month - 1) * 30.416666666 + day;
+        function getInstantSpeedMs(hours, minutes, seconds, day, month, latitude, year = 2024) {
+            // 1. День года (с учётом реального количества дней в месяцах)
+            const dayOfYear = getDayOfYear(day, month, year);
             
             // 2. Расстояние до Солнца (зависит от даты)
             const distanceToSun = AVG_DISTANCE_TO_SUN + VARIATION * Math.cos((dayOfYear / DAYS_IN_YEAR) * 2 * Math.PI);
@@ -467,6 +607,7 @@
         function calculateDistanceAndSpeeds() {
             // Получаем начальные данные
             const latitude = parseFloat(document.getElementById('latitude').value) || 0;
+            const year = 2024;
             
             const startHours = parseFloat(document.getElementById('start-hours').value) || 0;
             const startMinutes = parseFloat(document.getElementById('start-minutes').value) || 0;
@@ -480,15 +621,17 @@
             const endDay = parseFloat(document.getElementById('end-day').value) || 1;
             const endMonth = parseFloat(document.getElementById('end-month').value) || 1;
             
+            // ✅ ИСПРАВЛЕНО: Используем реальное количество дней в месяцах
+            const startDayOfYear = getDayOfYear(startDay, startMonth, year);
+            const endDayOfYear = getDayOfYear(endDay, endMonth, year);
+            
             // Переводим всё в секунды от начала года
-            const startTotalSeconds = (startMonth - 1) * 30 * 24 * 3600 + 
-                                      (startDay - 1) * 24 * 3600 + 
+            const startTotalSeconds = (startDayOfYear - 1) * 24 * 3600 + 
                                       startHours * 3600 + 
                                       startMinutes * 60 + 
                                       startSeconds;
             
-            const endTotalSeconds = (endMonth - 1) * 30 * 24 * 3600 + 
-                                    (endDay - 1) * 24 * 3600 + 
+            const endTotalSeconds = (endDayOfYear - 1) * 24 * 3600 + 
                                     endHours * 3600 + 
                                     endMinutes * 60 + 
                                     endSeconds;
@@ -504,14 +647,16 @@
             }
             
             const totalSeconds = endTotalSeconds - startTotalSeconds;
-            const totalHours = totalSeconds / 3600;
+            const totalDays = totalSeconds / (24 * 3600);
             
             // Обновляем информацию о длительности
-            const hoursPart = Math.floor(totalSeconds / 3600);
+            const daysPart = Math.floor(totalDays);
+            const hoursPart = Math.floor((totalDays % 1) * 24);
             const minutesPart = Math.floor((totalSeconds % 3600) / 60);
             const secondsPart = Math.round(totalSeconds % 60);
+            
             document.getElementById('duration-info').textContent = 
-                `Длительность периода: ${hoursPart} ч ${minutesPart} мин ${secondsPart} сек`;
+                `Длительность периода: ${daysPart} дн ${hoursPart} ч ${minutesPart} мин ${secondsPart} сек`;
             
             // === ИНТЕГРИРОВАНИЕ: разбиваем на интервалы по 1 секунде ===
             let totalDistanceMeters = 0;
@@ -525,18 +670,19 @@
                 const currentSeconds = startTotalSeconds + i;
                 
                 // Переводим секунды обратно в дату и время
-                const remainingSeconds = currentSeconds;
-                const calcMonth = Math.floor(remainingSeconds / (30 * 24 * 3600)) + 1;
-                const remainingAfterMonth = remainingSeconds % (30 * 24 * 3600);
-                const calcDay = Math.floor(remainingAfterMonth / (24 * 3600)) + 1;
-                const remainingAfterDay = remainingAfterMonth % (24 * 3600);
-                const calcHours = Math.floor(remainingAfterDay / 3600);
-                const remainingAfterHours = remainingAfterDay % 3600;
+                const daysFromStart = Math.floor(currentSeconds / (24 * 3600));
+                const remainingSeconds = currentSeconds % (24 * 3600);
+                const calcHours = Math.floor(remainingSeconds / 3600);
+                const remainingAfterHours = remainingSeconds % 3600;
                 const calcMinutes = Math.floor(remainingAfterHours / 60);
                 const calcSeconds = remainingAfterHours % 60;
                 
+                // Находим месяц и день из дня года
+                const dayOfYear = daysFromStart + 1;
+                const { month: calcMonth, day: calcDay } = getMonthAndDayFromDayOfYear(dayOfYear, year);
+                
                 // Получаем мгновенную скорость в этой точке (м/с)
-                const speedMs = getInstantSpeedMs(calcHours, calcMinutes, calcSeconds, calcDay, calcMonth, latitude);
+                const speedMs = getInstantSpeedMs(calcHours, calcMinutes, calcSeconds, calcDay, calcMonth, latitude, year);
                 const distancePerStep = speedMs * stepSeconds; // метры за шаг
                 
                 // Добавляем расстояние за этот шаг
@@ -560,6 +706,93 @@
             document.getElementById('avg-speed').textContent = avgSpeedKms.toFixed(5).replace('.', ',');
         }
         
+        // === ГЕОЛОКАЦИЯ: ПОЛУЧЕНИЕ ШИРОТЫ ПОЛЬЗОВАТЕЛЯ ===
+        function getGeolocation() {
+            const geoBtn = document.getElementById('geo-btn');
+            const geoBtnText = document.getElementById('geo-btn-text');
+            const geoStatus = document.getElementById('geo-status');
+            const latitudeInput = document.getElementById('latitude');
+            
+            // Проверяем поддержку геолокации
+            if (!navigator.geolocation) {
+                showGeoStatus('error', '❌ Геолокация не поддерживается вашим браузером');
+                return;
+            }
+            
+            // Показываем состояние загрузки
+            geoBtn.disabled = true;
+            geoBtn.classList.add('loading');
+            geoBtnText.textContent = 'Определяем...';
+            geoStatus.className = 'geo-status info';
+            geoStatus.textContent = '📡 Запрос разрешения на доступ к геопозиции...';
+            
+            // Запрашиваем геолокацию
+            navigator.geolocation.getCurrentPosition(
+                // ✅ УСПЕХ
+                function(position) {
+                    const latitude = position.coords.latitude.toFixed(4);
+                    const longitude = position.coords.longitude.toFixed(4);
+                    const accuracy = Math.round(position.coords.accuracy);
+                    
+                    // Подставляем широту в поле
+                    latitudeInput.value = latitude;
+                    
+                    // Показываем успех
+                    showGeoStatus('success', `✅ Широта определена: ${latitude}° (точность: ${accuracy}м)`);
+                    
+                    // Пересчитываем результаты с новой широтой
+                    calculateDistanceAndSpeeds();
+                    
+                    // Возвращаем кнопку в исходное состояние
+                    resetGeoButton();
+                },
+                // ❌ ОШИБКА
+                function(error) {
+                    let errorMessage = '';
+                    
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = '❌ Доступ к геолокации запрещен. Разрешите доступ в настройках браузера.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = '❌ Информация о местоположении недоступна.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = '❌ Превышено время ожидания ответа.';
+                            break;
+                        default:
+                            errorMessage = '❌ Произошла неизвестная ошибка.';
+                    }
+                    
+                    showGeoStatus('error', errorMessage);
+                    resetGeoButton();
+                },
+                // ⚙️ ОПЦИИ
+                {
+                    enableHighAccuracy: true, // Высокая точность (GPS)
+                    timeout: 10000, // Таймаут 10 секунд
+                    maximumAge: 300000 // Кэш 5 минут
+                }
+            );
+        }
+        
+        // === ПОКАЗАТЬ СТАТУС ГЕОЛОКАЦИИ ===
+        function showGeoStatus(type, message) {
+            const geoStatus = document.getElementById('geo-status');
+            geoStatus.className = `geo-status ${type}`;
+            geoStatus.textContent = message;
+        }
+        
+        // === СБРОСИТЬ КНОПКУ ГЕОЛОКАЦИИ ===
+        function resetGeoButton() {
+            const geoBtn = document.getElementById('geo-btn');
+            const geoBtnText = document.getElementById('geo-btn-text');
+            
+            geoBtn.disabled = false;
+            geoBtn.classList.remove('loading');
+            geoBtnText.textContent = 'Определить';
+        }
+        
         // === АВТОМАТИЧЕСКИЙ РАСЧЁТ ПРИ ЗАГРУЗКЕ ===
         window.onload = calculateDistanceAndSpeeds;
         
@@ -570,7 +803,3 @@
     </script>
 </body>
 </html>
-
-
-
-
